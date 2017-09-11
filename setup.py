@@ -18,7 +18,7 @@ setuptools.setup(
     classifiers=[
         "Environment :: X11 Applications",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: POSIX :: Linux :: macos",
+        "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
     ],
