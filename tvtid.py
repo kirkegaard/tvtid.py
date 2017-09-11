@@ -5,8 +5,11 @@ import sys
 import urllib
 import requests
 import requests_cache
-from datetime import date
-from datetime import datetime
+
+from datetime import date, datetime, timedelta
+
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 
 class Schedule(object):
@@ -137,8 +140,10 @@ class Tvtid(object):
         return schedules
 
     def schedules_for_today(self, channels=None):
-        today = date.today().isoformat()
-        return self.schedules_for(today, channels)
+        today = date.today()
+        if datetime.now().hour >= 0 or datetime.now().hour <= 5:
+            today = today - timedelta(days=1)
+        return self.schedules_for(today.isoformat(), channels)
 
     def channel_schedule(self, channels):
         pass
@@ -175,8 +180,35 @@ def process_args(args):
               "       Refer to \"tvtid -h\" for more info.")
         sys.exit(1)
 
+    tvtid = Tvtid()
+    channels = tvtid.channels()
+    keys = {k: c.title for k, c in channels.items()}
+    template = "[{start_time}] {title}"
+
     if args.c:
-        pass
+        key = process.extractOne(args.c, keys)
+
+        if key is None:
+            print('Couldnt find that channel')
+            sys.exit(1)
+
+        schedule = tvtid.schedules_for_today([key[2]])
+        current = schedule[0].current()
+
+        if current is None:
+            print('Couldnt get the schedule for that channel')
+            sys.exit(1)
+
+        print(template.format(
+            title=current[1].title,
+            start_time=current[1].start_time.strftime('%H:%M'),
+        ))
+
+        for future in current[2][:4]:
+            print(template.format(
+                title=future.title,
+                start_time=future.start_time.strftime('%H:%M'),
+            ))
 
 
 def main():

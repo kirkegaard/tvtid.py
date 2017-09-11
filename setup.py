@@ -11,6 +11,7 @@ setuptools.setup(
     url="https://github.com/kirkegaard/tvtid.py",
     download_url="https://github.com/kirkegaard/tvtid.py",
     install_requires=[
+        'fuzzywuzzy[speedup]',
         'requests',
         'requests_cache'
     ],
