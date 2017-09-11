@@ -1,0 +1,8 @@
+dist/*
+tvtid.egg-info/*
+*.pyc
+subprocess
+re
+build/*
+.coverage
+.vscode/*
