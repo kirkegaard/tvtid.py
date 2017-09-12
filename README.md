@@ -10,11 +10,28 @@ This is a Python library for interfacing with the unofficial API on `tvtid.tv2.d
 
 To get the schedule off a channel from now and forward
 
-`$ tvtid -c tv2`
+```bash
+$ tvtid -c tv2
+Schedule for: TV 2
+Date: 2017-09-12
+
+[21:25] Fogeden kommer
+[22:00] Nyhederne, Sporten og Vejret
+[22:27] Regionale nyheder
+...
+```
 
 To get the schedule at a specific date
 
-`$ tvtid -c tv2 -d '14. january'`
+```bash
+$ tvtid -c dr1 -d '14. september'
+Schedule for: DR1
+Date: 2017-09-14
+
+[05:15] Udsendelsesophør - DR1
+...
+[04:40] Kender du typen 2013
+```
 
 ## Library Example
 ```python
