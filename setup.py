@@ -1,12 +1,18 @@
 import setuptools
 
+try:
+    import pypandoc
+    LONG_DESC = pypandoc.convert("README.md", "rst")
+except(IOError, ImportError, RuntimeError):
+    LONG_DESC = open('README.md').read()
 
 setuptools.setup(
     name="tvtid",
-    version="0.1.3",
+    version="0.1.5",
     author="Christian Kirkegaard",
     author_email="christian@lowpoly.dk",
-    description="Shows you the TV Program",
+    description="Library and cli tool for querying tvtid.dk",
+    long_description=LONG_DESC,
     license="MIT",
     url="https://github.com/kirkegaard/tvtid.py",
     download_url="https://github.com/kirkegaard/tvtid.py",
