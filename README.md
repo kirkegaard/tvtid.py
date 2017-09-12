@@ -3,7 +3,7 @@
 This is a Python library for interfacing with the unofficial API on `tvtid.tv2.dk`.
 
 ## Example
-'''
+```python
 import tvtid
 
 client = tvtid.Client()
@@ -26,7 +26,7 @@ for schedule in schedules:
 # DR2           [20:45] VM håndbold: Kroatien-Norge, direkte [21:20] VM håndbold: Studiet [21:35] VM håndbold: Kroatien-Norge, direkte
 # TV3           [20:00] Dagens mand [21:00] American Pie 2 [23:10] The Joneses
 # …
-'''
+```
 
 ## License
 `tvtid` is published under the MIT license which can be read in the `LICENSE` file.
