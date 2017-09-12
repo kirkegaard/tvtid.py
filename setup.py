@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="tvtid",
-    version="0.1.2",
+    version="0.1.3",
     author="Christian Kirkegaard",
     author_email="christian@lowpoly.dk",
     description="Shows you the TV Program",
