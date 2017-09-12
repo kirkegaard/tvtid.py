@@ -141,7 +141,7 @@ class Tvtid(object):
 
     def schedules_for_today(self, channels=None):
         today = date.today()
-        if datetime.now().hour >= 0 or datetime.now().hour <= 5:
+        if datetime.now().hour >= 0 and datetime.now().hour <= 5:
             today = today - timedelta(days=1)
         return self.schedules_for(today.isoformat(), channels)
 
@@ -185,30 +185,33 @@ def process_args(args):
     keys = {k: c.title for k, c in channels.items()}
     template = "[{start_time}] {title}"
 
-    if args.c:
-        key = process.extractOne(args.c, keys)
+    if not args.c:
+        print('We need to know what channel you want the schedule for')
+        sys.exit(1)
 
-        if key is None:
-            print('Couldnt find that channel')
-            sys.exit(1)
+    key = process.extractOne(args.c, keys)
 
-        schedule = tvtid.schedules_for_today([key[2]])
-        current = schedule[0].current()
+    if key is None:
+        print('Couldnt find that channel')
+        sys.exit(1)
 
-        if current is None:
-            print('Couldnt get the schedule for that channel')
-            sys.exit(1)
+    schedule = tvtid.schedules_for_today([key[2]])
+    current = schedule[0].current()
 
+    if current is None:
+        print('Couldnt get the schedule for that channel')
+        sys.exit(1)
+
+    print(template.format(
+        title=current[1].title,
+        start_time=current[1].start_time.strftime('%H:%M'),
+    ))
+
+    for future in current[2][:4]:
         print(template.format(
-            title=current[1].title,
-            start_time=current[1].start_time.strftime('%H:%M'),
+            title=future.title,
+            start_time=future.start_time.strftime('%H:%M'),
         ))
-
-        for future in current[2][:4]:
-            print(template.format(
-                title=future.title,
-                start_time=future.start_time.strftime('%H:%M'),
-            ))
 
 
 def main():
