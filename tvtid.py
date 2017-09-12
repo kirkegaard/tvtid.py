@@ -141,7 +141,7 @@ class Client(object):
         return schedules
 
     def schedules_for_today(self, channels=None):
-        today = date.today()
+        today = datetime.now()
         if datetime.now().hour >= 0 and datetime.now().hour <= 5:
             today = today - timedelta(days=1)
         return self.schedules_for(today.isoformat(), channels)
