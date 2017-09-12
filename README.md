@@ -9,10 +9,12 @@ This is a Python library for interfacing with the unofficial API on `tvtid.tv2.d
 ## CLI
 
 To get the schedule off a channel from now and forward
-`tvtid -c tv2`
+
+`$ tvtid -c tv2`
 
 To get the schedule at a specific date
-`tvtid -c tv2 -d '14. january'`
+
+`$ tvtid -c tv2 -d '14. january'`
 
 ## Library Example
 ```python
