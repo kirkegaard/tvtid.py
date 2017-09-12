@@ -182,13 +182,15 @@ def process_args(args):
     tvtid = Tvtid()
     channels = tvtid.channels()
     keys = {k: c.title for k, c in channels.items()}
-    template = "[{start_time}] {title}"
+    template = '[{start_time}] {title}\n'
+    output = ''
 
     if not args.c:
         print('We need to know what channel you want the schedule for')
         sys.exit(1)
 
     key = process.extractOne(args.c, keys)
+    output += 'Schedule for: %s\n' % key[0]
 
     if key is None:
         print('Couldnt find that channel')
@@ -196,29 +198,33 @@ def process_args(args):
 
     if args.d:
         date = parser.parse(args.d)
+        output += 'Date: %s\n\n' % date.strftime("%Y-%m-%d")
         schedule = tvtid.schedules_for(date, [key[2]])
         for program in schedule[0].programs:
-            print(template.format(
+            output += template.format(
                 title=program.title,
                 start_time=program.start_time.strftime('%H:%M'),
-            ))
+            )
     else:
         schedule = tvtid.schedules_for_today([key[2]])
+        output += 'Date: %s\n\n' % datetime.now().strftime("%Y-%m-%d")
         current = schedule[0].current()
         if current is None:
             print('Couldnt get the schedule for that channel')
             sys.exit(1)
 
-        print(template.format(
+        output += template.format(
             title=current[1].title,
             start_time=current[1].start_time.strftime('%H:%M'),
-        ))
+        )
 
-        for future in current[2][:4]:
-            print(template.format(
+        for future in current[2]:
+            output += template.format(
                 title=future.title,
                 start_time=future.start_time.strftime('%H:%M'),
-            ))
+            )
+
+    print(output)
 
 
 def main():
