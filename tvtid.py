@@ -26,7 +26,9 @@ class Schedule(object):
                 break
 
         if current != 0:
-            return [self.programs[:current - 1], self.programs[current], self.programs[current + 1:-1]]
+            return self.programs[:current - 1], self.programs[current], self.programs[current + 1:-1]
+        else:
+            return None, None, None
 
     def current(self):
         return self.at(datetime.now())
@@ -99,7 +101,7 @@ class Program(object):
         return program
 
 
-class Tvtid(object):
+class Client(object):
 
     # The API backend host.
     API_BASE_URI = 'http://tvtid-app-backend.tv2.dk'
@@ -160,7 +162,7 @@ class Tvtid(object):
 
 def get_args(args):
     """Get the script arguments."""
-    description = "tvtid - Feteches the tv schedule from tvtid.dk"
+    description = "tvtid - Feteches the tv schedule from client.dk"
     arg = argparse.ArgumentParser(description=description)
 
     arg.add_argument("-c", metavar="\"channel\"",
@@ -179,8 +181,8 @@ def process_args(args):
               "       Refer to \"tvtid -h\" for more info.")
         sys.exit(1)
 
-    tvtid = Tvtid()
-    channels = tvtid.channels()
+    client = Client()
+    channels = client.channels()
     keys = {k: c.title for k, c in channels.items()}
     template = '[{start_time}] {title}\n'
     output = ''
@@ -199,14 +201,14 @@ def process_args(args):
     if args.d:
         date = parser.parse(args.d)
         output += 'Date: %s\n\n' % date.strftime("%Y-%m-%d")
-        schedule = tvtid.schedules_for(date, [key[2]])
+        schedule = client.schedules_for(date, [key[2]])
         for program in schedule[0].programs:
             output += template.format(
                 title=program.title,
                 start_time=program.start_time.strftime('%H:%M'),
             )
     else:
-        schedule = tvtid.schedules_for_today([key[2]])
+        schedule = client.schedules_for_today([key[2]])
         output += 'Date: %s\n\n' % datetime.now().strftime("%Y-%m-%d")
         current = schedule[0].current()
         if current is None:
