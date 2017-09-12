@@ -2,7 +2,7 @@ import tvtid
 
 client = tvtid.Client()
 schedules = client.schedules_for_today()
-channel_length = max(list(map(lambda x: len(x.title), client.channels().values())))
+channel_length = max(len(c.title) for c in client.channels().values())
 
 for schedule in schedules:
     channel = schedule.channel
