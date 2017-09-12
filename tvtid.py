@@ -7,9 +7,8 @@ import requests
 import requests_cache
 
 from datetime import date, datetime, timedelta
-
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from dateutil import parser
+from fuzzywuzzy import fuzz, process
 
 
 class Schedule(object):
@@ -195,23 +194,31 @@ def process_args(args):
         print('Couldnt find that channel')
         sys.exit(1)
 
-    schedule = tvtid.schedules_for_today([key[2]])
-    current = schedule[0].current()
+    if args.d:
+        date = parser.parse(args.d)
+        schedule = tvtid.schedules_for(date, [key[2]])
+        for program in schedule[0].programs:
+            print(template.format(
+                title=program.title,
+                start_time=program.start_time.strftime('%H:%M'),
+            ))
+    else:
+        schedule = tvtid.schedules_for_today([key[2]])
+        current = schedule[0].current()
+        if current is None:
+            print('Couldnt get the schedule for that channel')
+            sys.exit(1)
 
-    if current is None:
-        print('Couldnt get the schedule for that channel')
-        sys.exit(1)
-
-    print(template.format(
-        title=current[1].title,
-        start_time=current[1].start_time.strftime('%H:%M'),
-    ))
-
-    for future in current[2][:4]:
         print(template.format(
-            title=future.title,
-            start_time=future.start_time.strftime('%H:%M'),
+            title=current[1].title,
+            start_time=current[1].start_time.strftime('%H:%M'),
         ))
+
+        for future in current[2][:4]:
+            print(template.format(
+                title=future.title,
+                start_time=future.start_time.strftime('%H:%M'),
+            ))
 
 
 def main():
