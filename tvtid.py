@@ -118,7 +118,7 @@ class Client(object):
                         219, 37, 248]
 
     def __init__(self):
-        requests_cache.install_cache('tvtid_cache')
+        requests_cache.install_cache('/tmp/tvtid_cache')
 
     def schedules_for(self, date=None, channels=None):
         channels = {k: self.channels()[k] for k in channels or self.DEFAULT_CHANNELS}
