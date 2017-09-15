@@ -104,11 +104,12 @@ class Program(object):
 class Client(object):
 
     # The API backend host.
-    API_BASE_URI = 'http://tvtid-app-backend.tv2.dk'
+    API_BASE_URI = 'http://tvtid-backend.tv2.dk/tvtid-app-backend'
 
     # The default HTTP request headers
     HTTP_REQUEST_HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
+        'Accept': 'application/json, text/javascript'
     }
 
     # The default channels to return in a days schedule
@@ -123,7 +124,7 @@ class Client(object):
     def schedules_for(self, date=None, channels=None):
         channels = {k: self.channels()[k] for k in channels or self.DEFAULT_CHANNELS}
         channel_queries = urllib.parse.urlencode([("ch", cid) for cid in channels.keys()])
-        endpoint = '%s/api/tvtid/v1/dayviews/%s' % (self.API_BASE_URI, date)
+        endpoint = '%s/dayviews/%s' % (self.API_BASE_URI, date.strftime('%Y-%m-%d'))
         res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS, params=channel_queries)
 
         schedules = []
@@ -144,18 +145,18 @@ class Client(object):
         today = datetime.now()
         if datetime.now().hour >= 0 and datetime.now().hour <= 5:
             today = today - timedelta(days=1)
-        return self.schedules_for(today.isoformat(), channels)
+        return self.schedules_for(today, channels)
 
     def channel_schedule(self, channels):
         pass
 
     def channels(self):
-        endpoint = '%s/api/tvtid/v1/channels' % self.API_BASE_URI
+        endpoint = '%s/channels' % self.API_BASE_URI
         res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS)
         return dict(map(lambda c: (c.get('id'), Channel.from_json(c)), res.json()))
 
     def get_program_details(self, program):
-        endpoint = '%s/api/tvtid/v1/channels/%s/programs/%s' % (self.API_BASE_URI, program.channel_id, program.id)
+        endpoint = '%s/channels/%s/programs/%s' % (self.API_BASE_URI, program.channel_id, program.id)
         res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS)
         return Program.from_json(res.json())
 
