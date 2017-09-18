@@ -18,17 +18,21 @@ class Schedule(object):
         self.programs = programs
 
     def at(self, time):
-        current = 0
+        idx = 0
+        aired, current, upcoming = None, None, None
 
         for index, program in enumerate(self.programs):
             if program.start_time <= time and program.stop_time >= time:
-                current = index
+                idx = index
                 break
 
-        if current != 0:
-            return self.programs[:current - 1], self.programs[current], self.programs[current + 1:-1]
-        else:
-            return None, None, None
+        if idx != 0:
+            aired = self.programs[:idx - 1]
+            current = self.programs[idx]
+            upcoming = self.programs[idx + 1:-1]
+
+        return aired, current, upcoming
+
 
     def current(self):
         return self.at(datetime.now())
@@ -211,21 +215,24 @@ def process_args(args):
     else:
         schedule = client.schedules_for_today([key[2]])
         output += 'Date: %s\n\n' % datetime.now().strftime("%Y-%m-%d")
-        current = schedule[0].current()
+        aired, current, upcoming = schedule[0].current()
+
         if current is None:
-            print('Couldnt get the schedule for that channel')
-            sys.exit(1)
-
-        output += template.format(
-            title=current[1].title,
-            start_time=current[1].start_time.strftime('%H:%M'),
-        )
-
-        for future in current[2]:
+            output += 'Nothing is currently playing\n'
+        else:
             output += template.format(
-                title=future.title,
-                start_time=future.start_time.strftime('%H:%M'),
+                title=current.title,
+                start_time=current.start_time.strftime('%H:%M'),
             )
+
+        if upcoming is None:
+            output += 'No programs upcoming\n'
+        else:
+            for program in upcoming:
+                output += template.format(
+                    title=program.title,
+                    start_time=program.start_time.strftime('%H:%M'),
+                )
 
     print(output)
 
