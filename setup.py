@@ -8,7 +8,7 @@ except(IOError, ImportError, RuntimeError):
 
 setuptools.setup(
     name="tvtid",
-    version="0.2.0",
+    version="0.2.1",
     author="Christian Kirkegaard",
     author_email="christian@lowpoly.dk",
     description="Library and cli tool for querying tvtid.dk",

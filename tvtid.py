@@ -33,7 +33,6 @@ class Schedule(object):
 
         return aired, current, upcoming
 
-
     def current(self):
         return self.at(datetime.now())
 
@@ -59,9 +58,6 @@ class Channel(object):
         channel.icon = json.get('icon')
         channel.logo = json.get('logo')
         channel.logo_svg = json.get('svgLogo')
-        channel.category = json.get('category')
-        channel.region = json.get('region')
-        channel.language = json.get('lang')
 
         return channel
 
@@ -108,19 +104,17 @@ class Program(object):
 class Client(object):
 
     # The API backend host.
-    API_BASE_URI = 'http://tvtid-backend.tv2.dk/tvtid-app-backend'
+    API_BASE_URI = 'https://tvtid-api.api.tv2.dk/api/tvtid/v1'
 
     # The default HTTP request headers
     HTTP_REQUEST_HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
-        'Accept': 'application/json, text/javascript'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
+        'Accept': 'application/json, text/javascript, */*; q=0.01'
     }
 
     # The default channels to return in a days schedule
-    DEFAULT_CHANNELS = [1, 3, 5, 2, 31, 133, 7, 6, 4, 10155, 10154, 10153, 8,
-                        77,   156,  10093,  10066,  14, 10089, 12566, 10111, 70,
-                        118, 153, 94, 12948, 145, 185, 157, 15, 71, 93, 15049,
-                        219, 37, 248]
+    DEFAULT_CHANNELS = ['1', '2', '10155', '10154', '10089', '3',
+                        '4', '133', '77', '31', '12566', '5', '6', '10093', '156']
 
     def __init__(self):
         requests_cache.install_cache('/tmp/tvtid_cache')
@@ -128,7 +122,7 @@ class Client(object):
     def schedules_for(self, date=None, channels=None):
         channels = {k: self.channels()[k] for k in channels or self.DEFAULT_CHANNELS}
         channel_queries = urllib.parse.urlencode([("ch", cid) for cid in channels.keys()])
-        endpoint = '%s/dayviews/%s' % (self.API_BASE_URI, date.strftime('%Y-%m-%d'))
+        endpoint = '%s/epg/dayviews/%s' % (self.API_BASE_URI, date.strftime('%Y-%m-%d'))
         res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS, params=channel_queries)
 
         schedules = []
@@ -155,9 +149,9 @@ class Client(object):
         pass
 
     def channels(self):
-        endpoint = '%s/channels' % self.API_BASE_URI
-        res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS)
-        return dict(map(lambda c: (c.get('id'), Channel.from_json(c)), res.json()))
+        endpoint = '%s/schedules/channels' % self.API_BASE_URI
+        res = requests.get(endpoint, headers=self.HTTP_REQUEST_HEADERS).json()
+        return dict(map(lambda c: (c.get('id'), Channel.from_json(c)), res['channels']))
 
     def get_program_details(self, program):
         endpoint = '%s/channels/%s/programs/%s' % (self.API_BASE_URI, program.channel_id, program.id)
