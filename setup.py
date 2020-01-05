@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tvtid",
-    version="0.2.2",
+    version="0.2.3",
     author="Christian Kirkegaard",
     author_email="christian@lowpoly.dk",
     description="Library and cli tool for querying tvtid.dk",
