@@ -11,7 +11,7 @@ This is a Python library for interfacing with the unofficial API on `tvtid.tv2.d
 To get the schedule off a channel from now and forward
 
 ```bash
-$ tvtid -c tv2
+$ tvtid tv 2
 Schedule for: TV 2
 Date: 2017-09-12
 
@@ -24,11 +24,11 @@ Date: 2017-09-12
 To get the schedule at a specific date
 
 ```bash
-$ tvtid -c dr1 -d '14. september'
-Schedule for: DR1
-Date: 2017-09-14
+$ tvtid -d 2020-01-14 dr2
+Schedule for: DR2
+Date: 2020-01-14
 
-[05:15] Udsendelsesophør - DR1
+[05:15] Udsendelsesophør - DR2
 ...
 [04:40] Kender du typen 2013
 ```
